@@ -41,11 +41,7 @@ for i in range(mon_repetitions):
     mon.reset()
     done = False
     score = 0
-    t = 0
     while not done:
-        if t % 10 == 0:
-            print(t)
-        t += 1
         # vælg bedste træk
         best_score = 0
         best_action = moves[0]
