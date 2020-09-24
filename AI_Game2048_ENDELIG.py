@@ -33,32 +33,42 @@ avg_score /= repetitions
 
 # bestem gennemsnitlig score vha. monte carlo
 mon_avg_score = 0
-mon_repetitions = 1
-rep = 1000
+mon_repetitions = 100
+rep = 50
+mon = Game2048()
+search_length = 25
 for i in range(mon_repetitions):
     print(i)
-    mon = Game2048()
     mon.reset()
     done = False
     score = 0
+    mc = 0
     while not done:
         # vælg bedste træk
+        if mc % 100 == 0:
+            print(score, np.max(mon.board), "Move number:", mc)
+            if np.max(mon.board) == 2048:
+                print(mon.board)
+        mc += 1
         best_score = 0
         best_action = moves[0]
         for j in range(len(moves)):
             temp = Game2048((mon.board, mon.score))
-            temp.reset()
             a_score = 0
             eq = np.copy(mon.board)
             (b, s), r, d = temp.step(moves[j])
             comp = eq == b
             if comp.all():
                 continue
-            for _ in range(rep):
-                while not d:
+            for _ in range(rep):                
+                t = 0
+                while not d and t < search_length:
                     action = moves[np.random.randint(4)]
                     (b, s), r, d = temp.step(action)
-                a_score += s
+                    t += 1
+                    a_score += s
+                temp = Game2048((mon.board, mon.score))
+                (b, s), r, d = temp.step(moves[j])
             a_score /= rep
             if a_score > best_score:
                 best_score = a_score
@@ -66,6 +76,8 @@ for i in range(mon_repetitions):
         # udfør bedste træk
         (board, score), reward, done = mon.step(best_action)
     mon_avg_score += score
+    print(np.max(mon.board), " <--")
+    print(score)
 
 mon_avg_score /= mon_repetitions
 
