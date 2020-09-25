@@ -156,5 +156,18 @@ class Game2048():
             board[i,j] = 2
         score = 0
         return (board, score)
+    def get_valid_moves(self, moves):
+        valid_moves = np.array([])
+        for i in range(len(moves)):
+            temp = Game2048((self.board,self.score))
+            temp.step(moves[i])
+            if not np.all(temp.board == self.board):
+                valid_moves = np.append(valid_moves, moves[i])
+        return valid_moves
+
+    def val_exist(self, val):
+        if val in self.board:
+            return True
+        return False
 
 
